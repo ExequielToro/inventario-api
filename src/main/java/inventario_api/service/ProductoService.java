@@ -39,4 +39,13 @@ public class ProductoService {
         Producto producto = buscarPorId(id);
         productoRepository.delete(producto);
     }
+
+    public Producto descontarStock(Long id, Integer cantidad) {
+        Producto producto = buscarPorId(id);
+        if (producto.getStock() < cantidad) {
+            throw new RuntimeException("Stock insuficiente. Stock actual: " + producto.getStock());
+        }
+        producto.setStock(producto.getStock() - cantidad);
+        return productoRepository.save(producto);
+    }
 }

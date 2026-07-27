@@ -4,6 +4,8 @@ import inventario_api.model.Producto;
 import inventario_api.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import inventario_api.exception.ProductoNoEncontradoException;
+import inventario_api.exception.StockInsuficienteException;
 
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class ProductoService {
 
     public Producto buscarPorId(Long id) {
         return productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + id));
+                .orElseThrow(() -> new ProductoNoEncontradoException("Producto no encontrado con id: " + id));
     }
 
     public Producto guardar(Producto producto) {
@@ -43,7 +45,7 @@ public class ProductoService {
     public Producto descontarStock(Long id, Integer cantidad) {
         Producto producto = buscarPorId(id);
         if (producto.getStock() < cantidad) {
-            throw new RuntimeException("Stock insuficiente. Stock actual: " + producto.getStock());
+            throw new StockInsuficienteException("Stock insuficiente. Stock actual: " + producto.getStock());
         }
         producto.setStock(producto.getStock() - cantidad);
         return productoRepository.save(producto);
